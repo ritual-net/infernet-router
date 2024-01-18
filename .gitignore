@@ -1,0 +1,23 @@
+# Python
+env/
+__pycache__/
+.pytest_cache
+
+# Linters
+**/.mypy_cache/
+**/.ruff_cache/
+
+# Environments
+.env
+.venv
+env/
+venv/
+
+# Mac finder cache
+.DS_Store
+
+# Local logs
+*.log
+
+# IPs file
+ips.txt
