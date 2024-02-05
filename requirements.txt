@@ -1,4 +1,4 @@
-aiohttp==3.8.6
+aiohttp==3.9.2
 mypy==1.7.0
 quart==0.19.3
 structlog==23.2.0
