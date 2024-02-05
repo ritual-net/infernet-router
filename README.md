@@ -91,7 +91,7 @@ make run
 
 ### AWS / GCP
 
-This Infernet Router is deployed as part of the [infernet-node-deploy](https://github.com/ritual-net/infernet-node-deploy) repo.
+This Infernet Router is deployed as part of the [infernet-deploy](https://github.com/ritual-net/infernet-deploy) repo.
 
 
 ## Publishing a Docker image
