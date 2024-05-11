@@ -66,7 +66,7 @@ class NodeMonitor:
     async def _update_node(
         self: NodeMonitor, host: Hostname, nodes: dict[Hostname, NodeInfo]
     ) -> None:
-        """Fetches latest information for given node hostname, udpating the NodeInfo
+        """Fetches latest information for given node, updating its NodeInfo
         object in place. If node does not respond, marks it as unavailable.
 
         Args:

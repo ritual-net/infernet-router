@@ -6,8 +6,8 @@ A lightweight REST server to help route requests to Infernet nodes at scale. Thi
 
 **Currently, the Infernet Router:**
 - Maintains list of available (healthy) Infernet nodes, based on either / both:
-  1. A list of pre-specified IP addresses
-  2. A list of live nodes in the network discovered via API requests to the [Node Explorer](https://github.com/ritual-net/infernet-node-explorer) backend.
+  1. A list of pre-specified addresses.
+  2. A list of live nodes in the network discovered via the centralized metric sender.
 - Continuously fetches:
   - running containers, and "routes" to nodes that support containers requester by the client.
   - number of pending jobs, and "routes" to least busy node.
@@ -19,18 +19,18 @@ A lightweight REST server to help route requests to Infernet nodes at scale. Thi
 ## Setup
 
 There are two ways the router can discover IPs of nodes to route to:
-  1. A list of pre-specified IP addresses
-  2. A list of live nodes discovered via API requests to the [Node Explorer](https://github.com/ritual-net/infernet-node-explorer) backend.
+  1. A list of pre-specified hostnames / IP addresses.
+  2. A list of live nodes discovered via API requests to the [Node Explorer](https://github.com/ritual-net/infernet-node-explorer) backend, which interfaces with the centralized metric sender.
 
-### Pre-specified IPs
+### Pre-specified hosts
 
-Manually specifying IPs for the router to check is useful because:
+Manually specifying hostnames / IPs for the router to check is useful because:
 
 1. You can control the subset of nodes you route to.
 2. You can specify private, undiscoverable, or firewalled IPs that the router has priviledged access to.
 3. You might not need, want, or be able to connect to a Node Explorer backend for live node discovery.
 
-**To enable:** All that's required is an `ips.txt` file, which is a newline-separated list of Infernet node hostnames. Those could be in the form of `ip_address:port`, or a full url. See [example file](./ips.txt.example).
+**To enable:** All that's required is an `ips.txt` file, which is a newline-separated list of Infernet node addresses. Those could be in the form of `ip_address:port`, or a human-readable hostname. See [example file](./ips.txt.example).
 
 ```bash
 # Copy example file
@@ -41,16 +41,16 @@ cp ips.txt.example ips.txt
 
 ### Live nodes via Node Explorer
 
-Pulling live node information from the Node explorer is useful because:
-1. You can maintain a dynamic list of node IPs, i.e. discover new nodes and drop old ones.
-2. You don't need to pre-specify any IPs.
+Pulling live node information is useful because:
+1. The router maintains a dynamic list of node IPs, i.e. discover new nodes and drop old ones.
+2. You don't need to pre-specify any node addresses and maintain the `ips.txt` file.
 
 **Note** that only nodes with [forward_stats](https://docs.ritual.net/infernet/node/configuration#forward_stats-boolean) enabled can be discovered via this method.
 
 **To enable:** Specify `API_URL` that points to a Node Explorer REST API, as an environment variable, e.g.:
 
 ```bash
-export API_URL=http://localhost:3000
+export API_URL=...
 ```
 
 ## Deployment

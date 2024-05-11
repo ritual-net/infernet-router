@@ -11,7 +11,7 @@ services:
     volumes:
       - ./ips.txt:/app/ips.txt
     environment:
-      - API_URL=${API_URL:-http://host.docker.internal:3000}
+      - API_URL=${API_URL}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     deploy:

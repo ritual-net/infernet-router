@@ -43,7 +43,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy source code and environment file into the container.
+# Copy source code into the container.
 COPY src/ /app/src
 
 # Run the application.
