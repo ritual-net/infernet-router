@@ -1,14 +1,16 @@
 from __future__ import annotations
 
 from asyncio import CancelledError, Event, create_task
+from datetime import timedelta
 from typing import Tuple
 
 from hypercorn.asyncio import serve
 from hypercorn.config import Config
-from quart import Quart, jsonify, request, Response
+from quart import Quart, Response, jsonify, request
+from quart_rate_limiter import RateLimiter, rate_limit
 
-from monitor import NodeMonitor
 from logger import log
+from monitor import NodeMonitor
 
 
 class RESTServer:
@@ -35,6 +37,9 @@ class RESTServer:
             {"bind": [f"{self._address}:{self._port}"]}
         )
 
+        # Initialize rate limiter
+        RateLimiter(self._app)
+
         # Register Quart routes
         self.register_routes()
 
@@ -46,9 +51,10 @@ class RESTServer:
     def register_routes(self: RESTServer) -> None:
         """Registers Quart webserver routes"""
 
-        @self._app.route("/api/v1/ip", methods=["GET"])
-        async def ip() -> Tuple[Response, int]:
-            """Returns the next node IP to send a job to"""
+        @self._app.route("/api/v1/ips", methods=["GET"])
+        @rate_limit(10, timedelta(seconds=30))
+        async def ips() -> Tuple[Response, int]:
+            """Returns IPs of nodes that can fulfill a job request"""
 
             containers = request.args.getlist("container")
             if not containers:
@@ -57,18 +63,14 @@ class RESTServer:
                     400,
                 )
 
-            next_node_ip = self._monitor.get_next_node_ip(containers)
+            # Optional query parameters n and offset
+            n = request.args.get("n", default=3, type=int)
+            offset = request.args.get("offset", default=0, type=int)
 
-            if next_node_ip is None:
-                return (
-                    jsonify({"error": "No nodes available"}),
-                    503,
-                )
-            else:
-                return (
-                    jsonify({"ip": next_node_ip}),
-                    200,
-                )
+            return (
+                jsonify({"ips": self._monitor.get_nodes(containers, n, offset)}),
+                200,
+            )
 
     async def run_forever(self: RESTServer) -> None:
         """Main RESTServer lifecycle loop. Uses production hypercorn server"""

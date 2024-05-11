@@ -4,48 +4,33 @@ A lightweight REST server to help route requests to Infernet nodes at scale. Thi
 1. Requests an IP from the Infernet Router.
 2. Sends Infernet API request(s) directly to that IP.
 
-<u>Currently, the Infernet Router:</u>
-- Maintains list of available (healthy) Infernet nodes, based on a list of pre-specified IP addresses.
+**Currently, the Infernet Router:**
+- Maintains list of available (healthy) Infernet nodes, based on either / both:
+  1. A list of pre-specified IP addresses
+  2. A list of live nodes in the network discovered via API requests to the [Node Explorer](https://github.com/ritual-net/infernet-node-explorer) backend.
 - Continuously fetches:
   - running containers, and "routes" to nodes that support containers requester by the client.
   - number of pending jobs, and "routes" to least busy node.
 
-<u>In the future, it could also:</u>
+**In the future, it could also:**
 - Consider node resource utilization, instead of just pending job count.
 - Assign weights to different job types.
 
-## API
+## Setup
 
-Currently, the router only supports a single endpoint:
+There are two ways the router can discover IPs of nodes to route to:
+  1. A list of pre-specified IP addresses
+  2. A list of live nodes discovered via API requests to the [Node Explorer](https://github.com/ritual-net/infernet-node-explorer) backend.
 
-#### GET `/api/v1/ip`
+### Pre-specified IPs
 
-Returns an Infernet node IP to send requests to.
+Manually specifying IPs for the router to check is useful because:
 
-- **Method:** `GET`
-- **URL:** `/api/v1/ip`
-- **Query Parameters:**
-  - `container` (`string`, repeatable): IDs of containers required for the job. Multiple can be specified by repeating this parameter (e.g., `?container=inference1&container=inference2`). Only IPs of nodes running the specified containers will be selected.
-- **Response:**
-  - **Success:**
-    - **Code:** `200 OK`
-    - **Content:**
-    `{ "ip": string }`
-      - `ip`: IP address of an Infernet node
-  - **Failure:**
-    - **Code:** `503 Service Unavailable`
-    - **Content:**
-        `{"error": string}`
-      - `error`: Error message
+1. You can control the subset of nodes you route to.
+2. You can specify private, undiscoverable, or firewalled IPs that the router has priviledged access to.
+3. You might not need, want, or be able to connect to a Node Explorer backend for live node discovery.
 
-
-## Deployment
-
-### Locally
-
-#### Setup
-
-All that's required is an `ips.txt` file, which is a newline-separated list of Infernet node hostnames. Those could be in the form of `ip_address:port`, or `https://hostname`. See [example file](./ips.txt.example).
+**To enable:** All that's required is an `ips.txt` file, which is a newline-separated list of Infernet node hostnames. Those could be in the form of `ip_address:port`, or a full url. See [example file](./ips.txt.example).
 
 ```bash
 # Copy example file
@@ -54,22 +39,30 @@ cp ips.txt.example ips.txt
 # Fill in IP addresses / hosts, one on each line #
 ```
 
-## Deploying the router
+### Live nodes via Node Explorer
+
+Pulling live node information from the Node explorer is useful because:
+1. You can maintain a dynamic list of node IPs, i.e. discover new nodes and drop old ones.
+2. You don't need to pre-specify any IPs.
+
+**Note** that only nodes with [forward_stats](https://docs.ritual.net/infernet/node/configuration#forward_stats-boolean) enabled can be discovered via this method.
+
+**To enable:** Specify `API_URL` that points to a Node Explorer REST API, as an environment variable, e.g.:
+
+```bash
+export API_URL=http://localhost:3000
+```
+
+## Deployment
 
 ### Locally via Docker
 
 ```bash
-# Set tag
-tag="0.1.0"
-
-# Build it
-docker build -t ritualnetwork/infernet-router:$tag .
-
-# Specify port
+# Optional: specify port (defaults to 4000)
 PORT=4000
 
 # Run it
-docker run -p $PORT:$PORT -e PORT=$PORT -v ./ips.txt:/app/ips.txt ritualnetwork/infernet-router:$tag
+docker compose up -d
 ```
 
 ### Locally via source
@@ -106,6 +99,31 @@ docker build --platform linux/amd64 -t ritualnetwork/infernet-router:$tag .
 # Push to Dockerhub
 docker push ritualnetwork/infernet-router:$tag
 ```
+
+
+## API
+
+Currently, the router only supports a single endpoint:
+
+#### GET `/api/v1/ip`
+
+Returns an Infernet node IP to send requests to.
+
+- **Method:** `GET`
+- **URL:** `/api/v1/ip`
+- **Query Parameters:**
+  - `container` (`string`, repeatable): IDs of containers required for the job. Multiple can be specified by repeating this parameter (e.g., `?container=inference1&container=inference2`). Only IPs of nodes running the specified containers will be selected.
+- **Response:**
+  - **Success:**
+    - **Code:** `200 OK`
+    - **Content:**
+    `{ "ip": string }`
+      - `ip`: IP address of an Infernet node
+  - **Failure:**
+    - **Code:** `503 Service Unavailable`
+    - **Content:**
+        `{"error": string}`
+      - `error`: Error message
 
 ## License
 
