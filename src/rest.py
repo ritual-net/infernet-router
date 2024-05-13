@@ -72,6 +72,16 @@ class RESTServer:
                 200,
             )
 
+        @self._app.route("/api/v1/containers", methods=["GET"])
+        @rate_limit(5, timedelta(seconds=30))
+        async def containers() -> Tuple[Response, int]:
+            """Returns containers running across the network"""
+
+            return (
+                jsonify(self._monitor.get_containers()),
+                200,
+            )
+
     async def run_forever(self: RESTServer) -> None:
         """Main RESTServer lifecycle loop. Uses production hypercorn server"""
 

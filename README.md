@@ -103,16 +103,16 @@ docker push ritualnetwork/infernet-router:$tag
 
 ## API
 
-Currently, the router only supports a single endpoint:
+Currently, the router only supports two endpoints:
 
-#### GET `/api/v1/ip`
+#### 1. GET `/api/v1/ip`
 
 Returns an Infernet node IP to send requests to.
 
 - **Method:** `GET`
 - **URL:** `/api/v1/ip`
 - **Query Parameters:**
-  - `container` (`string`, repeatable): IDs of containers required for the job. Multiple can be specified by repeating this parameter (e.g., `?container=inference1&container=inference2`). Only IPs of nodes running the specified containers will be selected.
+  - `container` (`string`, _repeatable_): IDs of containers required for the job. Multiple can be specified by repeating this parameter (e.g., `?container=inference1&container=inference2`). Only IPs of nodes running the specified containers will be returned.
 - **Response:**
   - **Success:**
     - **Code:** `200 OK`
@@ -120,10 +120,26 @@ Returns an Infernet node IP to send requests to.
     `{ "ip": string }`
       - `ip`: IP address of an Infernet node
   - **Failure:**
-    - **Code:** `503 Service Unavailable`
+    - **Code:** `400`
     - **Content:**
-        `{"error": string}`
-      - `error`: Error message
+        `{"error": "No containers specified"}`
+        - If no containers are specified
+
+
+#### 2. GET `/api/v1/containers`
+
+Returns all discoverable services (containers) running on the Infernet Network.
+
+- **Method:** `GET`
+- **URL:** `/api/v1/containers`
+- **Response:**
+  - **Success:**
+    - **Code:** `200 OK`
+    - **Content:** Array of container objects
+    `{ "id": string, "count": number[, "description": string] }[]`
+      - `id`: Container (service) ID
+      - `count`: Number of discoverable nodes running this service
+      - `description` (`optional`): Description of the container
 
 ## License
 
