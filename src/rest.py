@@ -68,7 +68,7 @@ class RESTServer:
             offset = request.args.get("offset", default=0, type=int)
 
             return (
-                jsonify({"ips": self._monitor.get_nodes(containers, n, offset)}),
+                jsonify(self._monitor.get_nodes(containers, n, offset)),
                 200,
             )
 
