@@ -2,12 +2,12 @@
 #
 # Ensures the codebase passes the pre-commit stack.
 
-name: pre-commit
+name: python_ci
 
 on: [pull_request, push]
 
 jobs:
-  router:
+  python_ci:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,7 +21,8 @@ jobs:
 
     - name: Install dependencies (python)
       run: |
-        pip install -r requirements.txt
+        pip install -r requirements.txt \
+        pip install -r requirements-dev.txt
 
     - name: Run pre-commit hooks
       uses: pre-commit/action@v3.0.0

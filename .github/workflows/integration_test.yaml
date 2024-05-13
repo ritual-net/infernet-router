@@ -1,11 +1,11 @@
 # Integration test for live router instance
 
-name: pre-commit
+name: integration_test
 
 on: [push]
 
 jobs:
-  router:
+  integration_test:
     runs-on: ubuntu-latest
 
     steps:
