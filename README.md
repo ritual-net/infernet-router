@@ -22,7 +22,7 @@ There are two ways the router can discover IPs of nodes to route to:
   1. A list of pre-specified hostnames / IP addresses.
   2. A list of live nodes discovered via API requests to the [Node Explorer](https://github.com/ritual-net/infernet-node-explorer) backend, which interfaces with the centralized metric sender.
 
-### Pre-specified hosts
+### 1. Pre-specified hosts
 
 Manually specifying hostnames / IPs for the router to check is useful because:
 
@@ -39,7 +39,7 @@ cp ips.txt.example ips.txt
 # Fill in IP addresses / hosts, one on each line #
 ```
 
-### Live nodes via Node Explorer
+### 2. Live nodes via Node Explorer
 
 Pulling live node information is useful because:
 1. The router maintains a dynamic list of node IPs, i.e. discover new nodes and drop old ones.
