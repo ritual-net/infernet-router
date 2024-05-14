@@ -2,7 +2,10 @@
 
 name: integration_test
 
-on: [push]
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+  pull_request:
 
 jobs:
   integration_test:
