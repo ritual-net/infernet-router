@@ -200,6 +200,40 @@ class NodeMonitor:
         # Top n nodes after  offset
         return sorted_nodes[offset : offset + n]
 
+    def get_containers(self: NodeMonitor) -> list[dict[str, Any]]:
+        """Returns containers running on all available nodes, with counts
+
+        Returns:
+            list[dict[str, Any]]: List of containers running on available nodes, with
+                counts and descriptions
+        """
+
+        containers = {}
+        for node in self._available_nodes.values():
+            for container in node.containers:
+                if container["id"] not in containers:
+                    containers[container["id"]] = {"count": 1}
+                else:
+                    containers[container["id"]]["count"] += 1
+
+                # First non-empty description is used
+                if (
+                    "description" not in containers[container["id"]]
+                    and "description" in container
+                ):
+                    containers[container["id"]]["description"] = container[
+                        "description"
+                    ]
+
+        return [
+            {
+                "id": id,
+                "count": data["count"],
+                **({"description": data["description"]} if data["description"] else {}),
+            }
+            for id, data in containers.items()
+        ]
+
     async def stop(self: NodeMonitor) -> None:
         """Stop node monitor"""
         self._shutdown = True
