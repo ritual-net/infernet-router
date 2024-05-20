@@ -1,8 +1,8 @@
 # Infernet Router
 
-A lightweight REST server to help route requests to Infernet nodes at scale. This service **does not** route requests directly. Instead, it returns an Infernet node IP to send requests to. As such, it can be used in a 2-step process, where the client:
-1. Requests an IP from the Infernet Router.
-2. Sends Infernet API request(s) directly to that IP.
+A lightweight REST server to help route requests to Infernet nodes at scale. This service **does not** route requests directly. Instead, it returns a list of Infernet node IPs that can fulfill requests. As such, it can be used in a 2-step process, where the client:
+1. Requests a list of IPs from the Infernet Router.
+2. Sends Infernet API request(s) directly to one or more nodes.
 
 **Currently, the Infernet Router:**
 - Maintains list of available (healthy) Infernet nodes, based on either / both:
@@ -15,6 +15,16 @@ A lightweight REST server to help route requests to Infernet nodes at scale. Thi
 **In the future, it could also:**
 - Consider node resource utilization, instead of just pending job count.
 - Assign weights to different job types.
+
+## Live deployment
+
+The official deployment of the Infernet Router **is live** at **`infernet-router.ritual.net`**.
+
+You can query it as follows:
+
+```bash
+curl infernet-router.ritual.net/api/v1/ips?container=hello-world
+```
 
 ## Setup
 
@@ -122,6 +132,8 @@ Returns an Infernet node IP to send requests to.
 - **URL:** `/api/v1/ip`
 - **Query Parameters:**
   - `container` (`string`, _repeatable_): IDs of containers required for the job. Multiple can be specified by repeating this parameter (e.g., `?container=inference1&container=inference2`). Only IPs of nodes running the specified containers will be returned.
+  - `n` (`integer`, _optional_): Number of IPs to return. Defaults to `3`.
+  - `offset` (`integer`, _optional_): Number of node IPs to skip before returning.
 - **Response:**
   - **Success:**
     - **Code:** `200 OK`
