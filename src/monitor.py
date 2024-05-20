@@ -217,10 +217,10 @@ class NodeMonitor:
             for container in node.containers:
                 containers[container["id"]]["count"] += 1
 
-                # First non-empty description is used
                 if (
-                    not containers[container["description"]]
+                    not containers[container["id"]]["description"]
                     and "description" in container
+                    and container["description"]
                 ):
                     containers[container["id"]]["description"] = container[
                         "description"
@@ -230,7 +230,7 @@ class NodeMonitor:
             {
                 "id": id,
                 "count": data["count"],
-                **({"description": data["description"]} if data["description"] else {}),
+                "description": data["description"],
             }
             for id, data in containers.items()
         ]
