@@ -22,6 +22,15 @@ There are two ways the router can discover IPs of nodes to route to:
   1. A list of pre-specified hostnames / IP addresses.
   2. A list of live nodes discovered via API requests to the [Node Explorer](https://github.com/ritual-net/infernet-node-explorer) backend, which interfaces with the centralized metric sender.
 
+### 0. Modify configurations (optional)
+
+Export the following environment variables to modify default configurations. See [.env.example](.env.example) for examples.
+
+- `PORT` (`int`): The router server's port. Defaults to `4000`.
+- `REFRESH_INTERVAL` (`float`): Node polling interval in seconds. Defaults to `30`.
+- `RATELIMIT_REQS_PER_MIN` (`int`): Rate limit for requests per minute. Defaults to `10`.
+- `API_URL` (`str`): Node Explorer REST API. See [2](#2-live-nodes-via-node-explorer). Optional (empty by default).
+
 ### 1. Pre-specified hosts
 
 Manually specifying hostnames / IPs for the router to check is useful because:

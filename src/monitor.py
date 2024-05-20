@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from asyncio import create_task, gather, sleep
+from collections import defaultdict
 from dataclasses import dataclass
 from os import environ
 from typing import Any
@@ -8,6 +9,7 @@ from typing import Any
 from aiohttp import ClientSession
 from dotenv import load_dotenv
 
+from configs import REFRESH_INTERVAL
 from logger import log
 from sql import fetch_live_nodes
 
@@ -163,7 +165,7 @@ class NodeMonitor:
                 count=len(self._available_nodes),
             )
 
-            await sleep(30)
+            await sleep(REFRESH_INTERVAL)
 
     def get_nodes(
         self: NodeMonitor, containers: list[str], n: int = 3, offset: int = 0
@@ -208,17 +210,16 @@ class NodeMonitor:
                 counts and descriptions
         """
 
-        containers = {}
+        containers: defaultdict[str, Any] = defaultdict(
+            lambda: {"count": 0, "description": None}
+        )
         for node in self._available_nodes.values():
             for container in node.containers:
-                if container["id"] not in containers:
-                    containers[container["id"]] = {"count": 1}
-                else:
-                    containers[container["id"]]["count"] += 1
+                containers[container["id"]]["count"] += 1
 
                 # First non-empty description is used
                 if (
-                    "description" not in containers[container["id"]]
+                    not containers[container["description"]]
                     and "description" in container
                 ):
                     containers[container["id"]]["description"] = container[

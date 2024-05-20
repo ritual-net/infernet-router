@@ -9,6 +9,7 @@ from hypercorn.config import Config
 from quart import Quart, Response, jsonify, request
 from quart_rate_limiter import RateLimiter, rate_limit
 
+from configs import RATELIMIT_REQS_PER_MIN
 from logger import log
 from monitor import NodeMonitor
 
@@ -52,7 +53,7 @@ class RESTServer:
         """Registers Quart webserver routes"""
 
         @self._app.route("/api/v1/ips", methods=["GET"])
-        @rate_limit(10, timedelta(seconds=30))
+        @rate_limit(RATELIMIT_REQS_PER_MIN, timedelta(seconds=30))
         async def ips() -> Tuple[Response, int]:
             """Returns IPs of nodes that can fulfill a job request"""
 
@@ -73,7 +74,7 @@ class RESTServer:
             )
 
         @self._app.route("/api/v1/containers", methods=["GET"])
-        @rate_limit(5, timedelta(seconds=30))
+        @rate_limit(RATELIMIT_REQS_PER_MIN, timedelta(seconds=30))
         async def containers() -> Tuple[Response, int]:
             """Returns containers running across the network"""
 
