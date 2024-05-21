@@ -1,10 +1,10 @@
 import asyncio
 import signal
-
-from monitor import NodeMonitor
 from os import environ
-from rest import RESTServer
+
 from logger import log
+from monitor import NodeMonitor
+from rest import RESTServer
 
 
 def read_ips(filepath: str = "ips.txt") -> list[str]:
@@ -16,8 +16,12 @@ def read_ips(filepath: str = "ips.txt") -> list[str]:
     Returns:
         list[str]: List of node IPs
     """
-    with open(filepath, "r") as file:
-        return file.read().splitlines()
+    try:
+        with open(filepath, "r") as file:
+            return file.read().splitlines()
+    except Exception as e:
+        log.error(f"Failed to read IPs from {filepath}: {str(e)}")
+        return []
 
 
 async def shutdown(
@@ -63,7 +67,7 @@ async def main() -> None:
         # Check if any tasks failed
         if task.exception() is not None:
             # Log exception
-            log.error("Task exception", exception=task.exception())
+            log.error(f"Task exception: {task.exception()}")
 
 
 if __name__ == "__main__":

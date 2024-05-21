@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  router:
+    image: ritualnetwork/infernet-router:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "0.0.0.0:${PORT:-4000}:${PORT:-4000}"
+    volumes:
+      - ./ips.txt:/app/ips.txt
+    environment:
+      - API_URL=${API_URL}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 3s
+        max_attempts: 5
+        window: 120s
