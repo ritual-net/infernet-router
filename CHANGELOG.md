@@ -10,10 +10,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Ability to discover live nodes via connecting to a node explorer backend via an `API_URL`. Since there is no public backend deployment yet, this option is only available to the Ritual team.
 - Allows routing to explicitly specified nodes (via `ips.txt`), nodes discovered via the node explorer (`API_URL`), or both.
-
-### Changed
-
-### Fixed
+- New `containers/` endpoint for container discovery across all nodes monitored by the router.
 
 ### Security
 - Bumped `aiohttp` version to `3.9.4`.
