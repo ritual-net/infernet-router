@@ -126,10 +126,10 @@ Currently, the router only supports two endpoints:
 
 #### 1. GET `/api/v1/ip`
 
-Returns an Infernet node IP to send requests to.
+Returns Infernet node IPs to send requests to.
 
 - **Method:** `GET`
-- **URL:** `/api/v1/ip`
+- **URL:** `/api/v1/ips`
 - **Query Parameters:**
   - `container` (`string`, _repeatable_): IDs of containers required for the job. Multiple can be specified by repeating this parameter (e.g., `?container=inference1&container=inference2`). Only IPs of nodes running the specified containers will be returned.
   - `n` (`integer`, _optional_): Number of IPs to return. Defaults to `3`.
@@ -137,9 +137,8 @@ Returns an Infernet node IP to send requests to.
 - **Response:**
   - **Success:**
     - **Code:** `200 OK`
-    - **Content:**
-    `{ "ip": string }`
-      - `ip`: IP address of an Infernet node
+    - **Content:** `string[]`
+      - An array of node IPs
   - **Failure:**
     - **Code:** `400`
     - **Content:**
