@@ -20,7 +20,8 @@ async def fetch_live_nodes(api_url: str) -> list[dict[str, Any]]:
             async with session.get(url) as response:
                 # Check if the HTTP request was successful
                 if response.status == 200:
-                    return cast(list[dict[str, Any]], await response.json())
+                    body = await response.json()
+                    return cast(list[dict[str, Any]], body["data"])
                 else:
                     log.error("Failed to fetch live nodes", status=response.status)
     except Exception as e:
