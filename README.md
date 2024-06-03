@@ -124,7 +124,7 @@ docker push ritualnetwork/infernet-router:$tag
 
 Currently, the router only supports two endpoints:
 
-#### 1. GET `/api/v1/ip`
+#### 1. GET `/api/v1/ips`
 
 Returns Infernet node IPs to send requests to.
 
