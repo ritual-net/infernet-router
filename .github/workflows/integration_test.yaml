@@ -1,13 +1,14 @@
-# pre-commit workflow
-#
-# Ensures the codebase passes the pre-commit stack.
+# Integration test for live router instance
 
-name: pre-commit
+name: integration_test
 
-on: [pull_request, push]
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+  pull_request:
 
 jobs:
-  router:
+  integration_test:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,8 +23,7 @@ jobs:
     - name: Install dependencies (python)
       run: |
         pip install -r requirements.txt
+        pip install -r requirements-dev.txt
 
-    - name: Run pre-commit hooks
-      uses: pre-commit/action@v3.0.0
-      with:
-        extra_args: --all-files --show-diff-on-failure
+    - name: Run tests
+      run: pytest -vv test -s
